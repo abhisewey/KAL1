@@ -1,0 +1,273 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(45, 52, 54, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal container */
+.modal-container {
+  position: relative;
+  width: 90%;
+  max-width: 450px;
+  perspective: 1000px;
+}
+
+/* Close button */
+.close-button {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  width: 40px;
+  height: 40px;
+  background: #ffffff;
+  border: none;
+  border-radius: 50%;
+  font-size: 28px;
+  color: #2d3436;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  transition: all 0.3s ease;
+  line-height: 1;
+  padding: 0;
+}
+
+.close-button:hover {
+  background: #00b894;
+  color: #ffffff;
+  transform: rotate(90deg);
+}
+
+/* Flip card container */
+.flip-card {
+  position: relative;
+  width: 100%;
+  height: 550px;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.flip-card.flipped {
+  transform: rotateY(180deg);
+}
+
+/* Front and back sides */
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+}
+
+/* Modal content */
+.modal-content {
+  padding: 50px 40px 40px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.modal-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #2d3436;
+  margin: 0 0 10px 0;
+  text-align: center;
+}
+
+.modal-subtitle {
+  font-size: 16px;
+  color: #636e72;
+  margin: 0 0 30px 0;
+  text-align: center;
+}
+
+/* Form container */
+.form-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Input groups */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2d3436;
+  margin-left: 4px;
+}
+
+.input-group input {
+  padding: 14px 16px;
+  border: 2px solid #dfe6e9;
+  border-radius: 12px;
+  font-size: 15px;
+  color: #2d3436;
+  transition: all 0.3s ease;
+  outline: none;
+  background: #ffffff;
+}
+
+.input-group input:focus {
+  border-color: #00b894;
+  box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.1);
+}
+
+.input-group input::placeholder {
+  color: #b2bec3;
+}
+
+/* File input styling */
+.file-input {
+  padding: 12px 16px;
+  cursor: pointer;
+}
+
+.file-input::file-selector-button {
+  padding: 8px 16px;
+  border: none;
+  background: #00b894;
+  color: #ffffff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-right: 12px;
+  transition: all 0.3s ease;
+}
+
+.file-input::file-selector-button:hover {
+  background: #019875;
+  transform: translateY(-1px);
+}
+
+/* Submit button */
+.submit-button {
+  margin-top: 10px;
+  padding: 16px;
+  background: #00b894;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3);
+}
+
+.submit-button:hover {
+  background: #019875;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 184, 148, 0.4);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 184, 148, 0.3);
+}
+
+/* Switch text */
+.switch-text {
+  text-align: center;
+  color: #636e72;
+  font-size: 14px;
+  margin-top: 20px;
+}
+
+.switch-link {
+  color: #00b894;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.switch-link:hover {
+  color: #019875;
+  text-decoration: underline;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .modal-container {
+    max-width: 95%;
+  }
+
+  .modal-content {
+    padding: 40px 30px 30px;
+  }
+
+  .modal-title {
+    font-size: 28px;
+  }
+
+  .flip-card {
+    height: 580px;
+  }
+
+  .close-button {
+    top: -12px;
+    right: -12px;
+    width: 36px;
+    height: 36px;
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 400px) {
+  .modal-content {
+    padding: 35px 25px 25px;
+  }
+
+  .modal-title {
+    font-size: 24px;
+  }
+
+  .input-group input {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+
+  .submit-button {
+    padding: 14px;
+    font-size: 15px;
+  }
+}
