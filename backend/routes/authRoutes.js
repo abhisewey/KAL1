@@ -6,7 +6,7 @@ import {
 } from "../controllers/authController.js";
 
 import protect from "../middleware/authMiddleware.js";
-import { upload } from "../middlewares/upload.js";
+import { upload } from "../middleware/upload.js";
 
 const router = express.Router();
 

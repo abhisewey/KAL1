@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import User from "../models/userModel.js";
-import {generateToken} from "../utils/generateToken.js";
+import { generateToken } from "../utils/generateToken.js";
 
 // ----------------- SIGNUP -----------------
 export const registerUser = async (req, res) => {
@@ -52,13 +52,13 @@ export const loginUser = async (req, res) => {
     if (!isMatch)
       return res.status(400).json({ message: "Invalid email or password" });
 
-      return res.json({
-        _id: user._id,
-        username: user.username,
-        email: user.email,
-        profilePic: user.profilePic,
-        token: generateToken(user),
-      });
+    return res.json({
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      profilePic: user.profilePic,
+      token: generateToken(user._id),   // FIXED
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

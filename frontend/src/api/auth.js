@@ -5,9 +5,10 @@ const API = axios.create({
 });
 
 // Signup
-export const signupUser = async (formData) => {
-  return API.post("/signup", formData);
-};
+export const signupUser = (formData) =>
+  API.post("/signup", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
 
 // Login
 export const loginUser = async (data) => {

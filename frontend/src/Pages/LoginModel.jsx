@@ -33,7 +33,7 @@ const LoginModel = ({ onClose }) => {
     }
   };
 
-  // ------------------ LOGIN API CALL -------------------
+  // ------------------ LOGIN API ------------------------
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -41,18 +41,18 @@ const LoginModel = ({ onClose }) => {
     try {
       const res = await loginUser(loginData);
 
-      // Save JWT Token
+      // Save JWT token
       localStorage.setItem("token", res.data.token);
 
-      // Navigate to home and close modal
-      navigate('/home');
+      // Go to homepage
+      navigate('/');
       onClose();
     } catch (error) {
       alert(error.response?.data?.message || "Login Failed");
     }
   };
 
-  // ------------------ SIGNUP API CALL -------------------
+  // ------------------ SIGNUP API ----------------------
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -67,20 +67,19 @@ const LoginModel = ({ onClose }) => {
         formData.append("profilePic", signupData.profilePicture);
       }
 
-      const res = await signupUser(formData);
+      await signupUser(formData);
 
-      // Save JWT Token
-      localStorage.setItem("token", res.data.token);
+      alert("Account Created Successfully!");
 
-      // Navigate to home and close modal
-      navigate('/home');
-      onClose();
+      // Flip card back to login side
+      setIsFlipped(false);
+
     } catch (error) {
       alert(error.response?.data?.message || "Signup Failed");
     }
   };
 
-  // ------------------ CARD FLIP -------------------
+  // ------------------ CARD FLIP ----------------------
 
   const flipToSignup = () => setIsFlipped(true);
   const flipToLogin = () => setIsFlipped(false);
@@ -94,7 +93,7 @@ const LoginModel = ({ onClose }) => {
           <button className="close-button" onClick={onClose}>×</button>
 
           <div className={`flip-card ${isFlipped ? "flipped" : ""}`}>
-            
+
             {/* ---------------- LOGIN SIDE ---------------- */}
             <div className="flip-card-front">
               <div className="modal-content">
