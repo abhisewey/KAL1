@@ -5,7 +5,8 @@ import {generateToken} from "../utils/generateToken.js";
 // ----------------- SIGNUP -----------------
 export const registerUser = async (req, res) => {
   try {
-    const { username, email, password, profilePic } = req.body;
+    const { username, email, password } = req.body;
+    const profilePic = req.file ? req.file.filename : null;
 
     if (!username || !email || !password) {
       return res.status(400).json({ message: "All fields required" });

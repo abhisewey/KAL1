@@ -6,10 +6,11 @@ import {
 } from "../controllers/authController.js";
 
 import protect from "../middleware/authMiddleware.js";
+import { upload } from "../middlewares/upload.js";
 
 const router = express.Router();
 
-router.post("/signup", registerUser);
+router.post("/signup", upload.single("profilePic"), registerUser);
 router.post("/login", loginUser);
 router.get("/me", protect, getProfile);
 
