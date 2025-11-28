@@ -1,66 +1,113 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './LoginModel.css';
+import { loginUser, signupUser } from "../api/auth";
 
 const LoginModel = ({ onClose }) => {
+  const navigate = useNavigate();
   const [isFlipped, setIsFlipped] = useState(false);
-  const [loginData, setLoginData] = useState({ email: '', password: '' });
-  const [signupData, setSignupData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    profilePicture: null
+
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: ""
   });
+
+  const [signupData, setSignupData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    profilePicture: null,
+  });
+
+  // ------------------ INPUT HANDLERS -------------------
 
   const handleLoginChange = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
   };
 
   const handleSignupChange = (e) => {
-    if (e.target.name === 'profilePicture') {
+    if (e.target.name === "profilePicture") {
       setSignupData({ ...signupData, profilePicture: e.target.files[0] });
     } else {
       setSignupData({ ...signupData, [e.target.name]: e.target.value });
     }
   };
 
-  const handleLogin = (e) => {
+  // ------------------ LOGIN API CALL -------------------
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log('Login:', loginData);
+
+    try {
+      const res = await loginUser(loginData);
+
+      // Save JWT Token
+      localStorage.setItem("token", res.data.token);
+
+      // Navigate to home and close modal
+      navigate('/home');
+      onClose();
+    } catch (error) {
+      alert(error.response?.data?.message || "Login Failed");
+    }
   };
 
-  const handleSignup = (e) => {
+  // ------------------ SIGNUP API CALL -------------------
+
+  const handleSignup = async (e) => {
     e.preventDefault();
-    console.log('Signup:', signupData);
+
+    try {
+      const formData = new FormData();
+      formData.append("username", signupData.username);
+      formData.append("email", signupData.email);
+      formData.append("password", signupData.password);
+
+      if (signupData.profilePicture) {
+        formData.append("profilePic", signupData.profilePicture);
+      }
+
+      const res = await signupUser(formData);
+
+      // Save JWT Token
+      localStorage.setItem("token", res.data.token);
+
+      // Navigate to home and close modal
+      navigate('/home');
+      onClose();
+    } catch (error) {
+      alert(error.response?.data?.message || "Signup Failed");
+    }
   };
 
-  const flipToSignup = () => {
-    setIsFlipped(true);
-  };
+  // ------------------ CARD FLIP -------------------
 
-  const flipToLogin = () => {
-    setIsFlipped(false);
-  };
+  const flipToSignup = () => setIsFlipped(true);
+  const flipToLogin = () => setIsFlipped(false);
 
   return (
     <>
       <div className="modal-overlay" onClick={onClose}>
         <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-          <button className="close-button" onClick={onClose}>
-            ×
-          </button>
           
-          <div className={`flip-card ${isFlipped ? 'flipped' : ''}`}>
+          {/* Close Button */}
+          <button className="close-button" onClick={onClose}>×</button>
+
+          <div className={`flip-card ${isFlipped ? "flipped" : ""}`}>
+            
+            {/* ---------------- LOGIN SIDE ---------------- */}
             <div className="flip-card-front">
               <div className="modal-content">
+                
                 <h2 className="modal-title">Welcome Back</h2>
                 <p className="modal-subtitle">Login to your account</p>
-                
-                <div className="form-container">
+
+                <form className="form-container" onSubmit={handleLogin}>
+                  
                   <div className="input-group">
-                    <label htmlFor="login-email">Email</label>
+                    <label>Email</label>
                     <input
                       type="email"
-                      id="login-email"
                       name="email"
                       value={loginData.email}
                       onChange={handleLoginChange}
@@ -68,12 +115,11 @@ const LoginModel = ({ onClose }) => {
                       required
                     />
                   </div>
-                  
+
                   <div className="input-group">
-                    <label htmlFor="login-password">Password</label>
+                    <label>Password</label>
                     <input
                       type="password"
-                      id="login-password"
                       name="password"
                       value={loginData.password}
                       onChange={handleLoginChange}
@@ -81,32 +127,34 @@ const LoginModel = ({ onClose }) => {
                       required
                     />
                   </div>
-                  
-                  <button onClick={handleLogin} className="submit-button">
+
+                  <button type="submit" className="submit-button">
                     Login
                   </button>
-                </div>
-                
+                </form>
+
                 <p className="switch-text">
-                  Don't have an account?{' '}
+                  Don't have an account?{" "}
                   <span className="switch-link" onClick={flipToSignup}>
                     Sign Up
                   </span>
                 </p>
               </div>
             </div>
-            
+
+            {/* ---------------- SIGNUP SIDE ---------------- */}
             <div className="flip-card-back">
               <div className="modal-content">
+                
                 <h2 className="modal-title">Create Account</h2>
                 <p className="modal-subtitle">Join us today</p>
-                
-                <div className="form-container">
+
+                <form className="form-container" onSubmit={handleSignup}>
+                  
                   <div className="input-group">
-                    <label htmlFor="signup-username">Username</label>
+                    <label>Username</label>
                     <input
                       type="text"
-                      id="signup-username"
                       name="username"
                       value={signupData.username}
                       onChange={handleSignupChange}
@@ -114,12 +162,11 @@ const LoginModel = ({ onClose }) => {
                       required
                     />
                   </div>
-                  
+
                   <div className="input-group">
-                    <label htmlFor="signup-email">Email</label>
+                    <label>Email</label>
                     <input
                       type="email"
-                      id="signup-email"
                       name="email"
                       value={signupData.email}
                       onChange={handleSignupChange}
@@ -127,12 +174,11 @@ const LoginModel = ({ onClose }) => {
                       required
                     />
                   </div>
-                  
+
                   <div className="input-group">
-                    <label htmlFor="signup-password">Password</label>
+                    <label>Password</label>
                     <input
                       type="password"
-                      id="signup-password"
                       name="password"
                       value={signupData.password}
                       onChange={handleSignupChange}
@@ -140,32 +186,32 @@ const LoginModel = ({ onClose }) => {
                       required
                     />
                   </div>
-                  
+
                   <div className="input-group">
-                    <label htmlFor="profile-picture">Profile Picture</label>
+                    <label>Profile Picture</label>
                     <input
                       type="file"
-                      id="profile-picture"
                       name="profilePicture"
                       onChange={handleSignupChange}
                       accept="image/*"
                       className="file-input"
                     />
                   </div>
-                  
-                  <button onClick={handleSignup} className="submit-button">
+
+                  <button type="submit" className="submit-button">
                     Create Account
                   </button>
-                </div>
-                
+                </form>
+
                 <p className="switch-text">
-                  Already have an account?{' '}
+                  Already have an account?{" "}
                   <span className="switch-link" onClick={flipToLogin}>
                     Login
                   </span>
                 </p>
               </div>
             </div>
+
           </div>
         </div>
       </div>
@@ -173,4 +219,4 @@ const LoginModel = ({ onClose }) => {
   );
 };
 
-export default LoginModel;  
+export default LoginModel;
