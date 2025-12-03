@@ -45,7 +45,7 @@ const LoginModel = ({ onClose }) => {
       localStorage.setItem("token", res.data.token);
 
       // Go to homepage
-      navigate('/');
+      navigate('/Home');
       onClose();
     } catch (error) {
       alert(error.response?.data?.message || "Login Failed");
@@ -55,29 +55,36 @@ const LoginModel = ({ onClose }) => {
   // ------------------ SIGNUP API ----------------------
 
   const handleSignup = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const formData = new FormData();
-      formData.append("username", signupData.username);
-      formData.append("email", signupData.email);
-      formData.append("password", signupData.password);
+  try {
+    const formData = new FormData();
+    formData.append("username", signupData.username);
+    formData.append("email", signupData.email);
+    formData.append("password", signupData.password);
 
-      if (signupData.profilePicture) {
-        formData.append("profilePic", signupData.profilePicture);
-      }
-
-      await signupUser(formData);
-
-      alert("Account Created Successfully!");
-
-      // Flip card back to login side
-      setIsFlipped(false);
-
-    } catch (error) {
-      alert(error.response?.data?.message || "Signup Failed");
+    if (signupData.profilePicture) {
+      formData.append("profilePic", signupData.profilePicture);
     }
-  };
+
+    const res = await signupUser(formData);
+
+    // Save JWT token returned by backend
+    localStorage.setItem("token", res.data.token);
+
+    alert("Account Created Successfully!");
+
+    // 🔥 Redirect to home page
+    navigate('/home');   // or navigate('/')
+
+    // 🔥 Close the modal
+    onClose();
+
+  } catch (error) {
+    alert(error.response?.data?.message || "Signup Failed");
+  }
+};
+
 
   // ------------------ CARD FLIP ----------------------
 
