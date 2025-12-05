@@ -1,22 +1,20 @@
-import { useState } from 'react'
 import { Routes, Route } from "react-router-dom";
 import Intro from "./Pages/Intro";
-import Login from './Pages/LoginModel'
-import './App.css'
-import Home from './Pages/Home';
-
+import Home from "./Pages/Home";
+import AppLayout from "./Layout/Applayout"; 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
     <Routes>
+      {/* PUBLIC ROUTE — No navbar/footer */}
       <Route path="/" element={<Intro />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/home" element={<Home/>}/>
+
+      {/* PROTECTED ROUTES — Navbar + Footer always visible */}
+      <Route element={<AppLayout />}>
+        <Route path="/home" element={<Home />} />
+        {/* Add more authenticated Pages here */}
+      </Route>
     </Routes>
-    </>
-  )
+  );
 }
 
-export default App
+export default App;
