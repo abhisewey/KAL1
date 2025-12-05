@@ -1,0 +1,56 @@
+.navbar {
+  width: 100%;
+  padding: 18px 40px;
+  background: #ffffff;                 /* WHITE */
+  border-bottom: 1px solid #e6e6e6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;                    /* stays at top */
+  top: 0;
+  z-index: 1000;
+}
+
+/* =============================
+   LOGO
+   ============================= */
+.navbar-logo {
+  font-size: 35px;
+  font-weight: 800;
+  color: #16a34a;                      /* BLACK */
+  letter-spacing: 1px;
+}
+
+/* =============================
+   LOGOUT BUTTON
+   ============================= */
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: #ffffff;                 /* WHITE */
+  color: #111111;                      /* BLACK */
+  border: 2px solid #111111;           /* Black border */
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* Icon color = follow text */
+.logout-btn svg {
+  stroke: currentColor;
+}
+
+/* HOVER EFFECT (GREEN) */
+.logout-btn:hover {
+  background: #eaf9f0;                /* very light green */
+  border-color: #16a34a;              /* GREEN */
+  color: #16a34a;
+}
+
+/* ACTIVE CLICK EFFECT */
+.logout-btn:active {
+  transform: scale(0.95);
+}
