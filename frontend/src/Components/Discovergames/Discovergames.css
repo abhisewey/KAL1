@@ -64,7 +64,7 @@
 
 .game-sport-badge {
   display: inline-block;
-  background: #16A34A;
+  background: var(--kali-green);
   color: white;
   padding: 8px 16px;
   border-radius: 12px;
@@ -143,11 +143,11 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #16A34A;
+  color: var(--kali-green);
   font-weight: 600;
   font-size: 14px;
 }
 
 .spots-text {
-  color: #16A34A;
+  color: var(--kali-green);
 }

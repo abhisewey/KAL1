@@ -1,0 +1,246 @@
+/* ═══════════════════════════════════════════════════════
+   AllVenues.css
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Screen-reader only utility ─────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Page wrapper ────────────────────────────────────── */
+.all-venues-page {
+  min-height: 100vh;
+  background: #F5F5F5;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* ── Hero banner ─────────────────────────────────────── */
+.all-venues-hero {
+  background: linear-gradient(135deg, #0D0D0D 0%, #1a2e1a 60%, var(--kali-green) 100%);
+  padding: 56px 24px 64px;
+}
+
+.all-venues-hero__inner {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.all-venues-hero__title {
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 6px;
+  letter-spacing: -0.5px;
+}
+
+.all-venues-hero__sub {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 15px;
+  margin: 0 0 28px;
+}
+
+/* Search bar */
+.all-venues-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.all-venues-search__icon {
+  position: absolute;
+  left: 16px;
+  color: #9CA3AF;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.all-venues-search__input {
+  width: 100%;
+  padding: 16px 44px 16px 46px;
+  font-size: 15px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #0D0D0D;
+}
+
+.all-venues-search__input::placeholder {
+  color: #9CA3AF;
+}
+
+.all-venues-search__clear {
+  position: absolute;
+  right: 14px;
+  background: #F3F4F6;
+  border: none;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6B7280;
+  transition: background 0.2s;
+}
+
+.all-venues-search__clear:hover {
+  background: #E5E7EB;
+  color: #0D0D0D;
+}
+
+/* ── Filters bar ─────────────────────────────────────── */
+.all-venues-filters {
+  max-width: 1300px;
+  margin: -20px auto 0;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  padding: 14px 20px;
+}
+
+/* Sport filter chips */
+.filter-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-chip {
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1.5px solid #E5E7EB;
+  background: #ffffff;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.filter-chip:hover {
+  border-color: var(--kali-green);
+  color: var(--kali-green);
+}
+
+.filter-chip--active {
+  background: var(--kali-green);
+  border-color: var(--kali-green);
+  color: #ffffff;
+}
+
+/* Sort dropdown */
+.filter-sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6B7280;
+  flex-shrink: 0;
+}
+
+.filter-sort__select {
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  background: #ffffff;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.filter-sort__select:focus {
+  border-color: var(--kali-green);
+}
+
+/* ── Venue grid ──────────────────────────────────────── */
+.all-venues-container {
+  max-width: 1300px;
+  margin: 32px auto 64px;
+  padding: 0 24px;
+}
+
+.venues-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: 28px;
+  justify-items: stretch;
+}
+
+/* Stretch cards to fill grid cells */
+.venues-grid > [role="listitem"] {
+  display: flex;
+}
+
+.venues-grid .venue-card-v2 {
+  min-width: unset;
+  max-width: unset;
+  width: 100%;
+  flex: 1;
+}
+
+/* ── Empty state ─────────────────────────────────────── */
+.venues-empty {
+  text-align: center;
+  padding: 80px 24px;
+}
+
+.venues-empty__text {
+  font-size: 18px;
+  color: #6B7280;
+  margin-bottom: 20px;
+}
+
+.venues-empty__reset {
+  background: var(--kali-green);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 28px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.venues-empty__reset:hover {
+  background: #15803D;
+}
+
+/* ── Responsive ──────────────────────────────────────── */
+@media (max-width: 768px) {
+  .all-venues-hero {
+    padding: 40px 16px 52px;
+  }
+
+  .all-venues-filters {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .venues-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,230 @@
+/* ═══════════════════════════════════════════════════════════
+   VenueCard.css — Scoped styles for the VenueCard component
+   Design tokens match the KALI brand system:
+     Primary green : #16A34A
+     Dark text     : #0D0D0D
+     Muted text    : #6B7280
+     Card radius   : 16px
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Card shell ─────────────────────────────────────────── */
+.venue-card-v2 {
+  min-width: 340px;
+  max-width: 360px;
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  outline: none;
+
+  /* Smooth hover transition */
+  transition:
+    transform var(--transition-smooth),
+    box-shadow var(--transition-smooth);
+
+  /* Prevent text selection while clicking */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Hover: lift + stronger shadow + slight scale */
+.venue-card-v2:hover {
+  transform: translateY(-8px);
+  box-shadow:
+    var(--shadow-hover),
+    0 8px 24px rgba(16, 185, 129, 0.15);
+}
+
+/* Keyboard focus ring */
+.venue-card-v2:focus-visible {
+  outline: 3px solid var(--kali-green);
+  outline-offset: 3px;
+}
+
+/* Active press feedback */
+.venue-card-v2:active {
+  transform: translateY(-2px) scale(1.005);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Image wrapper ──────────────────────────────────────── */
+.venue-card__img-wrapper {
+  position: relative;
+  width: 100%;
+  height: 210px;
+  overflow: hidden;
+  background: #e5e7eb;
+}
+
+.venue-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+
+  /* Subtle zoom on card hover */
+  transition: transform 0.4s ease;
+}
+
+.venue-card-v2:hover .venue-card__img {
+  transform: scale(1.06);
+}
+
+/* Gradient at bottom of image — helps badge readability */
+.venue-card__img-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.08) 0%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
+  pointer-events: none;
+}
+
+/* ── Badges (image overlays) ────────────────────────────── */
+
+/* Top-left sport tag */
+.venue-card__sport-tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #0D0D0D;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  text-transform: uppercase;
+}
+
+/* Bottom-left: "+X more photos" */
+.venue-card__more-badge {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0, 0, 0, 0.68);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: 8px;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  letter-spacing: 0.2px;
+}
+
+/* Bottom-right: "FEATURED" */
+.venue-card__featured-badge {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0, 0, 0, 0.72);
+  color: #FBBF24; /* amber star, white text */
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  padding: 5px 11px;
+  border-radius: 8px;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  text-transform: uppercase;
+}
+
+/* ── Card body ──────────────────────────────────────────── */
+.venue-card__body {
+  padding: 14px 16px 18px;
+}
+
+/* ── Meta row: rating pill + distance ──────────────────── */
+.venue-card__meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 9px;
+}
+
+/* Rating pill */
+.venue-card__rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 11px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1;
+  color: #ffffff;
+}
+
+/* Colour variants */
+.venue-card__rating--high  { background: var(--kali-green); }          /* ≥ 4  green  */
+.venue-card__rating--mid   { background: #D97706; }                    /* 3–4  amber  */
+.venue-card__rating--low   { background: var(--danger-color); }        /* < 3  red    */
+
+.venue-card__review-count {
+  font-weight: 500;
+  opacity: 0.88;
+  font-size: 12px;
+}
+
+/* Distance chip */
+.venue-card__distance {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  background: #F3F4F6;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* ── Venue name ─────────────────────────────────────────── */
+.venue-card__name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0D0D0D;
+  margin: 0 0 7px 0;
+  line-height: 1.3;
+
+  /* Prevent overflow on long names */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Address row ────────────────────────────────────────── */
+.venue-card__address {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  margin: 0;
+  color: #6B7280;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.venue-card__pin-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #16A34A;
+}
+
+.venue-card__address span {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

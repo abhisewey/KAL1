@@ -32,7 +32,7 @@ export const registerUser = async (req, res) => {
       username: user.username,
       email: user.email,
       profilePic: user.profilePic,
-      token: generateToken(user._id),
+      token: generateToken(user),
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -57,7 +57,7 @@ export const loginUser = async (req, res) => {
       username: user.username,
       email: user.email,
       profilePic: user.profilePic,
-      token: generateToken(user._id),   // FIXED
+      token: generateToken(user),
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
