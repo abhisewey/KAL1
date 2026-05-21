@@ -1,27 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Trophy } from 'lucide-react';
-import BookVenues from '../Components/Bookvenue/Bookvenues';
+// import BookVenues from '../Components/Bookvenue/Bookvenues'; // Removed per requirement
 import DiscoverGames from '../Components/Discovergames/Discovergames';
-import VenueCard from '../Components/Bookvenue/VenueCard'; 
-import VenueSkeleton from '../Components/LoadingSkeleton/VenueSkeleton';
-import venues from '../data/venues';
+import FeaturedVenues from '../Components/FeaturedVenues/FeaturedVenues';
 import './Home.css';
 
 function Home() {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
-  
-  // Simulate network request for premium loading state demonstration
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Grab the top 4 featured venues for the highlight section
-  const featuredVenues = venues.filter(v => v.featured).slice(0, 4);
 
   return (
     <div className="home-dashboard">
@@ -66,41 +52,9 @@ function Home() {
       </section>
 
       {/* ── Featured Venues Highlights ── */}
-      {featuredVenues.length > 0 && (
-        <section className="home-section featured-section">
-          <div className="section-header">
-            <div>
-              <h2>Featured Venues</h2>
-              <p>Top-rated locations hand-picked for you</p>
-            </div>
-            <button className="btn-link" onClick={() => navigate('/venues')}>
-              View all <ArrowRight size={16} />
-            </button>
-          </div>
-          
-          <div className="featured-scroll-container">
-            <div className="featured-scroll-track">
-              {isLoading 
-                ? Array.from({ length: 4 }).map((_, i) => (
-                    <div className="featured-card-wrapper" key={`skeleton-${i}`}>
-                      <VenueSkeleton />
-                    </div>
-                  ))
-                : featuredVenues.map(venue => (
-                    <div className="featured-card-wrapper" key={venue.id}>
-                      <VenueCard venue={venue} onClick={() => navigate(`/venue/${venue.slug}`)} />
-                    </div>
-                  ))
-              }
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── Full Book Venues Section (Reused Component) ── */}
-      <div className="home-book-venues-wrapper">
-        <BookVenues variant="section" />
-      </div>
+      <section className="home-section featured-section">
+        <FeaturedVenues />
+      </section>
 
     </div>
   );

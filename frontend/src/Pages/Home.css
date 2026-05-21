@@ -196,68 +196,16 @@
   transform: translateX(3px);
 }
 
-/* ── Featured Venues Horizontal Scroll ── */
-.featured-scroll-container {
-  margin: 0 -16px;
-  padding: 0 16px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  scroll-snap-type: x mandatory;
-}
+/* (Featured Venues styles moved to FeaturedVenues.css with fv- prefix) */
 
-.featured-scroll-container::-webkit-scrollbar {
-  display: none;
-}
-
-.featured-scroll-track {
-  display: flex;
-  gap: 20px;
-  padding-bottom: 20px;
-}
-
-.featured-card-wrapper {
-  flex-shrink: 0;
-  width: 310px;
-  scroll-snap-align: start;
-}
-
-/* ── Book Venues Wrapper ── */
-.home-book-venues-wrapper {
-  background: var(--bg-white);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  padding: var(--space-4) 0;
-}
-
-/* ── Responsive Scaling ── */
+/* ── Desktop hero layout ── */
 @media (min-width: 1024px) {
   .home-hero {
     flex-direction: row;
     padding: var(--space-16) var(--space-12);
   }
-  
   .hero-content {
     padding-right: var(--space-8);
-  }
-  
-  .featured-scroll-container {
-    margin: 0;
-    padding: 0;
-    overflow-x: visible;
-    scroll-snap-type: none;
-  }
-  
-  .featured-scroll-track {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    padding-bottom: 0;
-  }
-  
-  .featured-card-wrapper {
-    width: 100%;
   }
 }
 

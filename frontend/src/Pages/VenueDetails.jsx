@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   MapPin,
@@ -9,29 +9,152 @@ import {
   IndianRupee,
   CheckCircle2,
   Dumbbell,
+  Globe,
+  AlertTriangle,
 } from 'lucide-react';
-import venues from "../data/venues";
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import { getVenueById } from '../api/venueApi';
+import mockVenues from '../data/venues';
 import './VenueDetails.css';
 
+// ── Default fallback image from unsplash (a premium sports stadium background) ──
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1540747737956-378724044282?auto=format&fit=crop&q=80&w=800';
+
 const VenueDetails = () => {
-  // Support both :id and :slug routing parameters gracefully
-  const { id, slug } = useParams();
-  const identifier = slug || id;
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(true);
   const [venue, setVenue] = useState(null);
+  const [error, setError] = useState(null);
+
+  const mapRef = useRef(null);
+  const mapInstance = useRef(null);
+
+  // Normalize details from both database and mock data sources
+  const normalizeVenueDetail = (v) => {
+    if (!v) return null;
+    const rawId = v.osmId || String(v._id || v.id || Math.random());
+    const idNum = parseInt(rawId.replace(/[^0-9]/g, '')) || 42;
+    const reviewCount = v.reviewCount || (idNum % 200) + 12;
+    const moreCount = v.moreCount || 0;
+
+    return {
+      id: v._id || v.id,
+      slug: v.slug || v._id || v.id,
+      name: v.name,
+      image: v.image,
+      rating: v.rating || 4.0,
+      reviewCount,
+      distance: v.distance || '2.0 km',
+      fullAddress: v.address || v.fullAddress || `${v.locality ? v.locality + ', ' : ''}${v.city}`,
+      featured: v.featured || false,
+      description: v.description || 'No description available.',
+      amenities: v.amenities || [],
+      priceRange: v.priceRange || { min: 1000, max: 1800, per: 'hour' },
+      sports: v.sports || [v.sport].filter(Boolean),
+      openHours: v.openHours || v.openingHours || '06:00 AM - 10:00 PM',
+      contact: v.contact || v.phone || '+91 98765 43210',
+      website: v.website || '',
+      latitude: v.latitude || 9.9816, // Default to Ernakulam center if absent
+      longitude: v.longitude || 76.2999,
+      mapsLink: v.mapsLink || `https://www.google.com/maps/dir/?api=1&destination=${v.latitude || 9.9816},${v.longitude || 76.2999}`,
+    };
+  };
 
   useEffect(() => {
-    // Simulate network fetch for premium UX feel
-    const timer = setTimeout(() => {
-      const foundVenue = venues.find((v) => v.slug === identifier || v.id === identifier);
-      setVenue(foundVenue);
-      setIsLoading(false);
-    }, 400); // 400ms synthetic loading
+    const fetchDetails = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      const isMongoId = id && id.match(/^[0-9a-fA-F]{24}$/);
 
-    return () => clearTimeout(timer);
-  }, [identifier]);
+      if (isMongoId) {
+        try {
+          const dbVenue = await getVenueById(id);
+          if (dbVenue) {
+            setVenue(normalizeVenueDetail(dbVenue));
+          } else {
+            // If API returns success but null, try to find in mock data
+            const mock = mockVenues.find((v) => v.id === id || v.slug === id);
+            if (mock) {
+              setVenue(normalizeVenueDetail(mock));
+            } else {
+              setError("Venue not found in database or local mock assets.");
+            }
+          }
+        } catch (err) {
+          console.warn("[VenueDetails] Fetch failed, checking mock static data...", err.message);
+          // Fallback to check mock data if backend call fails
+          const mock = mockVenues.find((v) => v.id === id || v.slug === id);
+          if (mock) {
+            setVenue(normalizeVenueDetail(mock));
+          } else {
+            setError(err.message || "Failed to load venue details.");
+          }
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        // If not a Mongo ID, retrieve directly from static mock data
+        const mock = mockVenues.find((v) => v.slug === id || v.id === id);
+        if (mock) {
+          setVenue(normalizeVenueDetail(mock));
+        } else {
+          setError("Venue not found.");
+        }
+        setIsLoading(false);
+      }
+    };
+
+    fetchDetails();
+  }, [id]);
+
+  // Leaflet Map Initialization
+  useEffect(() => {
+    if (venue && venue.latitude && venue.longitude && mapRef.current) {
+      // Clean up previous map instance to prevent memory leaks / target re-initialization error
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+
+      try {
+        const coords = [venue.latitude, venue.longitude];
+        
+        mapInstance.current = L.map(mapRef.current, {
+          zoomControl: true,
+          scrollWheelZoom: false,
+        }).setView(coords, 15);
+
+        // Add OSM style map tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(mapInstance.current);
+
+        // Custom green theme dot marker
+        const customMarkerIcon = L.divIcon({
+          html: `<div style="background-color: #16a34a; width: 14px; height: 14px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 0 8px rgba(0,0,0,0.3)"></div>`,
+          className: 'custom-leaflet-marker',
+          iconSize: [20, 20],
+          iconAnchor: [10, 10]
+        });
+
+        // Add marker to map
+        L.marker(coords, { icon: customMarkerIcon }).addTo(mapInstance.current);
+      } catch (err) {
+        console.error("Leaflet map initialization failed:", err);
+      }
+    }
+
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [venue]);
 
   if (isLoading) {
     return (
@@ -42,11 +165,12 @@ const VenueDetails = () => {
     );
   }
 
-  if (!venue) {
+  if (error || !venue) {
     return (
       <div className="vd-not-found" role="alert">
-        <h2>Venue not found</h2>
-        <p>We couldn't locate the venue you're looking for.</p>
+        <AlertTriangle size={48} className="text-danger" style={{ marginBottom: '8px' }} />
+        <h2>Error Loading Details</h2>
+        <p>{error || "We couldn't locate the venue you're looking for."}</p>
         <button className="vd-back-btn" onClick={() => navigate('/home')}>
           <ArrowLeft size={18} /> Back to Dashboard
         </button>
@@ -63,11 +187,13 @@ const VenueDetails = () => {
     fullAddress,
     featured,
     description,
-    amenities = [],
+    amenities,
     priceRange,
-    sports = [],
+    sports,
     openHours,
     contact,
+    website,
+    mapsLink,
   } = venue;
 
   // Rating Badge Logic
@@ -78,7 +204,12 @@ const VenueDetails = () => {
     <main className="vd-page">
       {/* ── Hero image ───────────────────────────────── */}
       <div className="vd-hero">
-        <img src={image} alt={`${name} sports venue`} className="vd-hero__img" />
+        <img 
+          src={image || FALLBACK_IMAGE} 
+          alt={`${name} sports venue`} 
+          className="vd-hero__img" 
+          onError={(e) => { e.target.src = FALLBACK_IMAGE; }}
+        />
         <div className="vd-hero__overlay" aria-hidden="true" />
 
         {/* Elegant Back Button */}
@@ -101,11 +232,26 @@ const VenueDetails = () => {
           )}
         </div>
       </div>
-
+{venue.images && venue.images.length > 0 && (
+        <div className="vd-gallery">
+          <h2 className="vd-section__title" id="vd-gallery-title">Gallery</h2>
+          <div className="vd-gallery__scroll">
+            {venue.images.map((img, idx) => (
+              <img
+                key={idx}
+                src={img}
+                alt={`${name} image ${idx + 1}`}
+                className="vd-gallery__img"
+                onError={(e) => { e.target.src = FALLBACK_IMAGE; }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
       {/* ── Content card ─────────────────────────────── */}
       <div className="vd-content">
 
-        {/* ── Header row ─────────────────────────────── */}
+        {/* ── Header row ──────────────────────────────── */}
         <div className="vd-header">
           <div className="vd-header__left">
             <h1 className="vd-name">{name}</h1>
@@ -120,8 +266,8 @@ const VenueDetails = () => {
               aria-label={`Rated ${rating} from ${reviewCount} reviews`}
             >
               <Star size={14} fill="currentColor" strokeWidth={0} aria-hidden="true" />
-              {rating.toFixed(1)}
-              <span className="vd-rating__count">({reviewCount})</span>
+              {Number(rating).toFixed(1)}
+              {reviewCount > 0 && <span className="vd-rating__count">({reviewCount})</span>}
             </span>
             <span className="vd-distance">
               <MapPin size={13} aria-hidden="true" className="text-kali" />~{distance}
@@ -139,6 +285,12 @@ const VenueDetails = () => {
             <Phone size={16} aria-hidden="true" className="text-kali" />
             <span>{contact}</span>
           </div>
+          {website && (
+            <a href={website} target="_blank" rel="noopener noreferrer" className="vd-pill vd-pill--link">
+              <Globe size={16} aria-hidden="true" className="text-kali" />
+              <span>Visit Website</span>
+            </a>
+          )}
           <div className="vd-pill vd-pill--price">
             <IndianRupee size={16} aria-hidden="true" className="text-kali" />
             <span>
@@ -157,32 +309,57 @@ const VenueDetails = () => {
             </section>
 
             {/* ── Sports offered ─────────────────────────── */}
-            <section className="vd-section" aria-labelledby="vd-sports-title">
-              <h2 className="vd-section__title" id="vd-sports-title">
-                <Dumbbell size={18} aria-hidden="true" className="text-kali" />
-                Sports Available
+            {sports.length > 0 && (
+              <section className="vd-section" aria-labelledby="vd-sports-title">
+                <h2 className="vd-section__title" id="vd-sports-title">
+                  <Dumbbell size={18} aria-hidden="true" className="text-kali" />
+                  Sports Available
+                </h2>
+                <div className="vd-tags" role="list">
+                  {sports.map((s) => (
+                    <span key={s} className="vd-tag" role="listitem">{s}</span>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* ── Location Map Section ───────────────────── */}
+            <section className="vd-section" aria-labelledby="vd-map-title">
+              <h2 className="vd-section__title" id="vd-map-title">
+                <MapPin size={18} aria-hidden="true" className="text-kali" />
+                Location Map
               </h2>
-              <div className="vd-tags" role="list">
-                {sports.map((s) => (
-                  <span key={s} className="vd-tag" role="listitem">{s}</span>
-                ))}
-              </div>
+              <div 
+                className="vd-map-container" 
+                ref={mapRef} 
+                style={{ 
+                  height: '320px', 
+                  borderRadius: '16px', 
+                  border: '1px solid #E5E7EB', 
+                  overflow: 'hidden', 
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                  position: 'relative',
+                  zIndex: 5
+                }} 
+              />
             </section>
           </div>
 
           {/* RIGHT COLUMN (Amenities) */}
           <aside className="vd-grid-sidebar">
-            <section className="vd-section vd-amenities-box" aria-labelledby="vd-amenities-title">
-              <h2 className="vd-section__title" id="vd-amenities-title">Amenities</h2>
-              <ul className="vd-amenities" role="list">
-                {amenities.map((item) => (
-                  <li key={item} className="vd-amenity" role="listitem">
-                    <CheckCircle2 size={16} className="vd-amenity__icon text-kali" aria-hidden="true" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </section>
+            {amenities.length > 0 && (
+              <section className="vd-section vd-amenities-box" aria-labelledby="vd-amenities-title">
+                <h2 className="vd-section__title" id="vd-amenities-title">Amenities</h2>
+                <ul className="vd-amenities" role="list">
+                  {amenities.map((item) => (
+                    <li key={item} className="vd-amenity" role="listitem">
+                      <CheckCircle2 size={16} className="vd-amenity__icon text-kali" aria-hidden="true" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
           </aside>
         </div>
 
@@ -192,13 +369,36 @@ const VenueDetails = () => {
             <span className="vd-cta__price-label">Starting from</span>
             <span className="vd-cta__price-value">₹{priceRange.min}<span>/{priceRange.per}</span></span>
           </div>
-          <button
-            className="btn btn-primary vd-cta__btn"
-            aria-label={`Book ${name}`}
-            onClick={() => alert(`Booking flow for ${name} coming soon!`)}
-          >
-            Book Now
-          </button>
+          <div className="vd-cta__actions">
+            <a 
+              href={mapsLink} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="btn btn-secondary vd-cta__nav-btn"
+              style={{ 
+                marginRight: '12px', 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: '8px',
+                padding: '14px 28px',
+                textDecoration: 'none',
+                background: '#ffffff',
+                border: '1px solid #D1D5DB',
+                borderRadius: '12px',
+                fontWeight: '600',
+                color: '#374151'
+              }}
+            >
+              Get Directions
+            </a>
+            <button
+              className="btn btn-primary vd-cta__btn"
+              aria-label={`Book ${name}`}
+              onClick={() => alert(`Booking flow for ${name} coming soon!`)}
+            >
+              Book Now
+            </button>
+          </div>
         </div>
 
       </div>

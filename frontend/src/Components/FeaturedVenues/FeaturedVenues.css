@@ -1,0 +1,134 @@
+/* ═══════════════════════════════════════════════════════════
+   FeaturedVenues.css — Scoped with 'fv-' prefix to prevent
+   any collision with Home.css / BookVenues / DiscoverGames.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Section wrapper ──────────────────────────────────────── */
+.fv-section {
+  position: relative;
+  width: 100%;
+  overflow: hidden; /* prevent cards from expanding the page */
+}
+
+/* ── Header row: title + arrows ───────────────────────────── */
+.fv-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  gap: 1rem;
+}
+
+.fv-header__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.fv-title {
+  font-size: clamp(24px, 3.5vw, 30px);
+  font-weight: 800;
+  color: var(--text-primary, #0d0d0d);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.fv-subtitle {
+  font-size: 15px;
+  color: var(--text-secondary, #6b7280);
+  margin: 0;
+}
+
+/* ── Arrow buttons ────────────────────────────────────────── */
+.fv-header__arrows {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.fv-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color, #e5e7eb);
+  background: var(--bg-white, #ffffff);
+  color: var(--text-primary, #0d0d0d);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.fv-arrow:hover {
+  background: var(--primary-light, #d1fae5);
+  color: var(--primary, #10b981);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+}
+
+/* ── Carousel track ───────────────────────────────────────── */
+.fv-carousel {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px; /* breathing room for card shadow */
+
+  /* Hide scrollbar on all browsers */
+  scrollbar-width: none;           /* Firefox */
+  -ms-overflow-style: none;        /* IE / Edge */
+}
+.fv-carousel::-webkit-scrollbar {
+  display: none;                   /* Chrome / Safari */
+}
+
+/* ── Individual card slot ─────────────────────────────────── */
+.fv-card-slot {
+  flex: 0 0 280px;                 /* fixed width, never stretch */
+  max-width: 280px;
+  scroll-snap-align: start;
+}
+
+/* Override VenueCard's min-width so it fits inside the slot */
+.fv-card-slot .venue-card-v2 {
+  min-width: unset;
+  max-width: 100%;
+  width: 100%;
+}
+
+/* ── Empty state ──────────────────────────────────────────── */
+.fv-empty {
+  padding: 2rem;
+  color: var(--text-secondary, #6b7280);
+  font-size: 15px;
+  text-align: center;
+  width: 100%;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .fv-card-slot {
+    flex: 0 0 240px;
+    max-width: 240px;
+  }
+  .fv-arrow {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+@media (max-width: 480px) {
+  .fv-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .fv-card-slot {
+    flex: 0 0 220px;
+    max-width: 220px;
+  }
+}

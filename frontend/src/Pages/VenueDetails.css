@@ -435,3 +435,53 @@
     text-align: center;
   }
 }
+
+/* ── Custom Leaflet Marker ── */
+.custom-leaflet-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Link Pills ── */
+.vd-pill--link {
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vd-pill--link:hover {
+  background: var(--kali-green-light);
+  border-color: var(--kali-green);
+  color: #15803D !important;
+  transform: translateY(-1px);
+}
+
+/* ── CTA Actions Layout ── */
+.vd-cta__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.vd-cta__nav-btn:hover {
+  background: #F3F4F6 !important;
+  border-color: #9CA3AF !important;
+  color: #111827 !important;
+}
+
+@media (max-width: 480px) {
+  .vd-cta__actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+  
+  .vd-cta__nav-btn {
+    margin-right: 0 !important;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
